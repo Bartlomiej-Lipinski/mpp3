@@ -1,0 +1,3 @@
+Deutschland hat im Laufe seiner Geschichte zahlreiche berühmte Persönlichkeiten hervorgebracht, darunter Albert Einstein, Johann Wolfgang von Goethe, Ludwig van Beethoven und Angela Merkel.
+Jeder dieser Texte wurde in einer separaten Textdatei mit einem Namen gespeichert, der dem Titel des Textes entspricht. Der erste Text "Beschreibung Berlins" wurde beispielsweise in einer Datei mit dem Namen "beschreibung_berlins.txt" gespeichert.
+Diese Texte sind kurze Beschreibungen verschiedener Themen mit Bezug zu Deutschland. Sie können sie als Ausgangspunkt für weitere Recherchen oder zum Schreiben eigener Texte über Deutschland verwenden.
