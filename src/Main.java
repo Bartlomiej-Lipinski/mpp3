@@ -8,13 +8,12 @@ import java.util.Scanner;
 public class Main {
     static int accuracy = 0;  
     static int iter = 0;
-    static int accufinal = 0;
     public static void main(String[] args) throws FileNotFoundException {
         Perceptron polski = new Perceptron();
         Perceptron niemiecki = new Perceptron();
         Perceptron francuski = new Perceptron();
         LayerManagment.addPerceptron(polski, niemiecki, francuski);
-        while (true){
+        while (accuracy != 30){
             accuracy = 0;
             File folderPL = new File("Training_Set/Polish_Training_Set");
             for (File plik : Objects.requireNonNull(folderPL.listFiles())) {
@@ -79,7 +78,7 @@ public class Main {
             System.out.println("Dokladnosc: " + accuracy);
             iter++;
             System.out.println("iteracja: " + iter);
-            if(accuracy==30 && iter >274) {
+            if(accuracy==30 && iter >275) {
                 break;
             }
         }
@@ -105,6 +104,26 @@ public class Main {
                     System.out.println("Nieznany");
                 }
             }
+        }
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        while (!input.equals("exit")) {
+            String tekst = input;
+            ArrayList<Double> inputs = mapToDoubleArray(mapString(tekst), lengthOfText(tekst));
+            normalizeInput(inputs);
+            Perceptron p = maximumSelector(inputs);
+            try {
+                if (p.equals(polski)) {
+                    System.out.println("Polski");
+                } else if (p.equals(niemiecki)) {
+                    System.out.println("Niemiecki");
+                } else if (p.equals(francuski)) {
+                    System.out.println("Francuski");
+                }
+            }catch (NullPointerException e) {
+                System.out.println("Nieznany");
+            }
+            input = scanner.next();
         }
     }
 
