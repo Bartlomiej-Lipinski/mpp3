@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Perceptron {
     private ArrayList<Double> weights;
-    private double learningRate = 0.5;
+    private double learningRate = 0.6;
     private double threshold = 0.2;
 
     public Perceptron() {
