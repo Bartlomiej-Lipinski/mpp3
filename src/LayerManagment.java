@@ -24,4 +24,18 @@ public class LayerManagment {
     public static ArrayList<Perceptron> getPerceptrons() {
         return perceptrons;
     }
+    public static void resetPerceptronsAccuracyAndTrained() {
+        for (Perceptron p : perceptrons) {
+            p.notTrained();
+            p.setAccuracy(0);
+        }
+    }
+    public static Perceptron getPerceptronByName(String name) {
+        for (Perceptron p : perceptrons) {
+            if (p.getName().equals(name)) {
+                return p;
+            }
+        }
+        return null;
+    }
 }

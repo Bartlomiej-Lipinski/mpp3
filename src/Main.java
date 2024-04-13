@@ -1,38 +1,45 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-    static int accuracy = 0;
     static int iter = 0;
-    static Perceptron polski = new Perceptron();
-    static Perceptron niemiecki = new Perceptron();
-    static Perceptron francuski = new Perceptron();
+    static int testaccuracy = 0;
+    static int trainaccuracy = 0;
 
     public static void main(String[] args) throws FileNotFoundException {
-        LayerManagment.addPerceptron(polski, niemiecki, francuski);
+        Scanner scanner = new Scanner(System.in);
         while (true) {
-            accuracy = 0;
-            trainPolish();
-            trainDeuch();
-            trainFrench();
-            System.out.println("Dokladnosc: " + accuracy);
+            trainaccuracy = 0;
+            testaccuracy = 0;
+            train();
             iter++;
             System.out.println("iteracja: " + iter);
-            if (accuracy >= 30) {
+            for (Perceptron p : LayerManagment.getPerceptrons()) {
+                if (p.isTrained() && p.getAccuracy() == 10) {
+                    trainaccuracy++;
+                }
+            }
+            if (trainaccuracy == LayerManagment.getPerceptrons().size()) {
+                System.out.println("Wszystkie perceptrony sa nauczone");
+                for (Perceptron p : LayerManagment.getPerceptrons()) {
+                    System.out.println(p.getName() + " " + p.isTrained() + " " + p.getAccuracy()+" "+p.getThreshold());
+                }
                 break;
             }
+            for (Perceptron p : LayerManagment.getPerceptrons()) {
+                System.out.println(p.getName() + " " + p.isTrained() + " " + p.getAccuracy());
+            }
+            LayerManagment.resetPerceptronsAccuracyAndTrained();
         }
         System.out.println("Trening zakonczony");
         LayerManagment.normalizeWeights();
         Test();
-        Scanner scanner = new Scanner(System.in);
-        while (true){
+        System.out.println("Test accuracy: " + testaccuracy);
+        System.out.println("Test zakonczony");
+        while (true) {
             String input = scanner.nextLine();
-            if (input.equals("exit")){
+            if (input.equals("exit")) {
                 break;
             }
             manualTest(input);
@@ -112,91 +119,6 @@ public class Main {
         return text;
     }
 
-    public static void trainPolish() throws FileNotFoundException {
-        File folderPL = new File("Training_Set/Polish_Training_Set");
-        for (File plik : Objects.requireNonNull(folderPL.listFiles())) {
-            String tekst = readText(plik);
-            Perceptron p = maximumSelector(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)));
-            try {
-                if (p.equals(polski)) {
-                    accuracy++;
-                } else if (p.equals(niemiecki)) {
-                    accuracy--;
-                    polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                    niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                    francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                } else if (p.equals(francuski)) {
-                    accuracy--;
-                    polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                    niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                    francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                }
-            } catch (NullPointerException e) {
-                accuracy--;
-                polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-            }
-        }
-    }
-
-    public static void trainDeuch() throws FileNotFoundException {
-        File folderGM = new File("Training_Set/German_Training_Set");
-        for (File plik : Objects.requireNonNull(folderGM.listFiles())) {
-            String tekst = readText(plik);
-            Perceptron p = maximumSelector(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)));
-            try {
-                if (p.equals(niemiecki)) {
-                    accuracy++;
-                } else if (p.equals(polski)) {
-                    accuracy--;
-                    niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                    polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                    francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                } else if (p.equals(francuski)) {
-                    accuracy--;
-                    niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                    polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                    francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                }
-            } catch (NullPointerException e) {
-                accuracy--;
-                niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-            }
-
-        }
-    }
-
-    public static void trainFrench() throws FileNotFoundException {
-        File folderFR = new File("Training_Set/French_Training_Set");
-        for (File plik : Objects.requireNonNull(folderFR.listFiles())) {
-            String tekst = readText(plik);
-            Perceptron p = maximumSelector(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)));
-            try {
-                if (p.equals(francuski)) {
-                    accuracy++;
-                } else if (p.equals(niemiecki)) {
-                    accuracy--;
-                    francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                    polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                    niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                } else if (p.equals(polski)) {
-                    accuracy--;
-                    francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                    polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                    niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                }
-            } catch (NullPointerException e) {
-                accuracy--;
-                francuski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                polski.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                niemiecki.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-            }
-        }
-    }
-
     public static void Test() throws FileNotFoundException {
         File folderTest = new File("Test_Set");
         for (File podfolder : Objects.requireNonNull(folderTest.listFiles())) {
@@ -205,36 +127,71 @@ public class Main {
                 String tekst = readText(plik);
                 ArrayList<Double> inputs = mapToDoubleArray(mapString(tekst), lengthOfText(tekst));
                 normalizeInput(inputs);
-                Perceptron p = maximumSelector(inputs);
                 try {
-                    if (p.equals(polski)) {
-                        System.out.println("Polski");
-                    } else if (p.equals(niemiecki)) {
-                        System.out.println("Niemiecki");
-                    } else if (p.equals(francuski)) {
-                        System.out.println("Francuski");
-                    }
+                    Perceptron p = maximumSelector(inputs);
+                    if (p.getName().equals(podfolder.getName().split("_")[0])) {
+                        testaccuracy++;
+                    } 
+                    System.out.println(p.getName());
                 } catch (NullPointerException e) {
-                    System.out.println("Nieznany");
+                    System.out.println("Nieznany jezyk");
                 }
             }
         }
     }
+
+    public static void train() throws FileNotFoundException {
+        File folderTest = new File("Training_Set");
+        if (iter == 0) {
+            for (File podfolder : Objects.requireNonNull(folderTest.listFiles())) {
+                Perceptron p = new Perceptron();
+                String s = podfolder.getName().split("_")[0];
+                p.setName(s);
+                LayerManagment.addPerceptron(p);
+            }
+        }
+        for (File podfolder : Objects.requireNonNull(folderTest.listFiles())) {
+            for (File plik : Objects.requireNonNull(podfolder.listFiles())) {
+                String tekst = readText(plik);
+                Perceptron choice = maximumSelector(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)));
+                if (choice == null) {
+                    LayerManagment.getPerceptrons().forEach(perceptron -> {
+                        if (perceptron.getName().equals(podfolder.getName().split("_")[0])) {
+                            perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
+                        } else {
+                            perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
+                        }
+                    });
+                } else if (choice.getName().equals(podfolder.getName().split("_")[0])) {
+                    LayerManagment.getPerceptrons().forEach(perceptron -> {
+                        if (perceptron.getName().equals(podfolder.getName().split("_")[0])) {
+                            perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
+                        } else {
+                            perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
+                        }
+                    });
+                    choice.setAccuracy(choice.getAccuracy() + 1);
+                    if (choice.getAccuracy() == 10) {
+                        choice.trained();
+                    }
+                } else {
+                    LayerManagment.getPerceptrons().forEach(perceptron -> {
+                        if (perceptron.getName().equals(podfolder.getName().split("_")[0])) {
+                            perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
+                        } else {
+                            perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     public static void manualTest(String input) {
         String tekst = getText(input);
         ArrayList<Double> inputs = mapToDoubleArray(mapString(tekst), lengthOfText(tekst));
         normalizeInput(inputs);
         Perceptron p = maximumSelector(inputs);
-        try {
-            if (p.equals(polski)) {
-                System.out.println("Polski");
-            } else if (p.equals(niemiecki)) {
-                System.out.println("Niemiecki");
-            } else if (p.equals(francuski)) {
-                System.out.println("Francuski");
-            }
-        } catch (NullPointerException e) {
-            System.out.println("Nieznany");
-        }
+        System.out.println(p.getName());
     }
 }
