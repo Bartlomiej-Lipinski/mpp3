@@ -158,18 +158,12 @@ public class Main {
                     LayerManagment.getPerceptrons().forEach(perceptron -> {
                         if (perceptron.getName().equals(podfolder.getName().split("_")[0])) {
                             perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
+                            perceptron.setAccuracy(perceptron.getAccuracy() - 1);
                         } else {
                             perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
                         }
                     });
                 } else if (choice.getName().equals(podfolder.getName().split("_")[0])) {
-                    LayerManagment.getPerceptrons().forEach(perceptron -> {
-                        if (perceptron.getName().equals(podfolder.getName().split("_")[0])) {
-                            perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
-                        } else {
-                            perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
-                        }
-                    });
                     choice.setAccuracy(choice.getAccuracy() + 1);
                     if (choice.getAccuracy() == 10) {
                         choice.trained();
@@ -178,6 +172,7 @@ public class Main {
                     LayerManagment.getPerceptrons().forEach(perceptron -> {
                         if (perceptron.getName().equals(podfolder.getName().split("_")[0])) {
                             perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 1);
+                            perceptron.setAccuracy(perceptron.getAccuracy() - 1);
                         } else {
                             perceptron.train(mapToDoubleArray(mapString(tekst), lengthOfText(tekst)), 0);
                         }
@@ -192,6 +187,10 @@ public class Main {
         ArrayList<Double> inputs = mapToDoubleArray(mapString(tekst), lengthOfText(tekst));
         normalizeInput(inputs);
         Perceptron p = maximumSelector(inputs);
-        System.out.println(p.getName());
+        if (p == null) {
+            System.out.println("Nieznany jezyk");
+        } else {
+            System.out.println(p.getName());
+        }
     }
 }
